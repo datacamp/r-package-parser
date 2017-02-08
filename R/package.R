@@ -1,11 +1,3 @@
-download <- function(filename, path) {
-  options(timeout = 30)
-
-  skip_with_message = simpleError('not found')
-  tryCatch(download.file(path, filename), error = function(e) skip_with_message);
-
-}
-
 readme <- function(sd_pkg) {
 
   # First look in staticdocs path
@@ -23,12 +15,8 @@ readme <- function(sd_pkg) {
   return("");
 }
 
-delete_files <- function(tarfilename, package_name) {
-  system(paste("./scripts/clean.sh "));
-}
-
 parse_topic_and_write <- function(rd, topic, pkg, path, package_path) {
-  print(topic)
+  message(sprintf("Parsing %s ...", topic))
   html <- staticdocs:::to_html.Rd_doc(rd,
                                       env = new.env(parent = globalenv()),
                                       topic = topic,
@@ -42,13 +30,14 @@ parse_topic_and_write <- function(rd, topic, pkg, path, package_path) {
   cat(out, file = path)
 }
 
-process_package <- function(package_name, repoType) {
+parse_package <- function(package_name, repoType) {
+  message("Parsing package...")
   wd = getwd()
-  package_path =  paste("packages/", package_name, sep="")
+  package_path <- file.path("packages", package_name)
 
   p <- devtools::as.package(package_path)
 
-  out_dir = paste("jsons", package_name ,"man", sep="/")
+  out_dir <- file.path("jsons", package_name, "man")
   dir.create(out_dir, recursive= TRUE)
 
   pkg <- as.sd_package(package_path, site_path=out_dir)

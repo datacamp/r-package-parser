@@ -2,10 +2,10 @@
 % Please edit documentation in R/main.R
 \name{main}
 \alias{main}
-\title{The main function}
+\title{Main entry point of the package}
 \usage{
 main()
 }
 \description{
-The main function
+Main entry point of the package
 }
