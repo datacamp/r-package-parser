@@ -1,0 +1,23 @@
+Package: RPackageParser
+Type: Package
+Title: Parse R packages to get the documentation.
+Version: 0.0.1
+Author: Filip Schouwenaars
+Maintainer: Filip Schouwenaars <filip@datacamp.com>
+URL: http://www.datacamp.com
+BugReports: https://github.com/datacamp/r-package-parser/issues
+Description: This package is amazing.
+License: MIT + file LICENSE
+LazyData: TRUE
+Depends: R (>= 3.0.0)
+Imports:
+  jsonlite,
+  aws.sqs,
+  stringr,
+  pkgdown
+Remotes:
+  hadley/pkgdown
+Suggests:
+  testthat
+RoxygenNote: 6.0.1
+VignetteBuilder: knitr
