@@ -5,15 +5,15 @@
 
 delete_files <- function() {
   message("Cleaning up ...")
-  system("shopt -s dotglob && rm -rf packages/* && rm -rf jsons/*")
+  unlink("packages", recursive = TRUE)
 }
 
 download_and_unpack <- function(pkg_url, pkg_name) {
-  message("Downloading tarball and unpack...")
+  message("Downloading and unpacking tarball ...")
 
   tar_path <- paste0(pkg_name, ".tar.gz")
   options(timeout = 30)
-  tryCatch(download.file(pkg_url, tar_path),
+  tryCatch(download.file(pkg_url, tar_path, quiet = TRUE),
            error = function(e) simpleError('not found'))
 
   untar(tar_path, exdir = "packages/")

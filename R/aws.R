@@ -1,15 +1,13 @@
-to_queue <- "RdocWorkerQueue"
-from_queue <- "RdocRWorkerQueue"
-error_queue <- "RdocRWorkerDeadQueue"
 
 getMessages <- function(queue) {
-  receive_msg(queue, wait = 20)
+
 }
 
-syncS3 <- function(package_name) {
+dump_jsons_on_s3 <- function(package_name) {
   message("Syncing S3 ...")
-  package_path <- paste(package_name, sep= "/")
-  system(sprintf("aws s3 sync jsons/%s s3://assets.rdocumentation.org/rpackages/unarchived/%s", package_path, package_path))
+
+  #package_path <- paste(package_name, sep= "/")
+  #system(sprintf("aws s3 sync jsons/%s s3://assets.rdocumentation.org/rpackages/unarchived/%s", package_path, package_path))
 }
 
 # # Copied from https://github.com/cloudyr/aws.sqs/blob/master/R/messages.r but added support for custom query args
@@ -59,40 +57,15 @@ syncS3 <- function(package_name) {
 #   }
 # }
 
-# SEE IF YOU CAN USE aws.sqs::send_msg instead of manual override.
+sqs_attributes <- list(MessageAttribute.1.Name = "type",
+                       MessageAttribute.1.Value.DataType ="String",
+                       MessageAttribute.1.Value.StringValue ="version")
+
+# see if you can use aws.sqs::send_msg instead of manual override.
 #' @importFrom aws.sqs send_msg
-postDescriptionJob <- function(queue, package_name) {
-  message("Posting description job...")
-  description_json_path <- paste("jsons", package_name, "DESCRIPTION.json", sep = "/");
-
-  body <- paste(readLines(description_json_path ,encoding="UTF-8", warn = FALSE), collapse = "\n");
-
-  send_msg(queue, body,
-           query= list(
-             MessageAttribute.1.Name= "type",
-             MessageAttribute.1.Value.DataType="String",
-             MessageAttribute.1.Value.StringValue="version"
-           )
-  );
-}
-
-postTopicsJob <- function(queue, package_name) {
-  message("Posting topics job...")
-  jsons <- c()
-  package_path <- paste("jsons", package_name, "man", sep="/")
-  files <- list.files(path=package_path, full.names = TRUE)
-  for (filename in files) {
-    if (endsWith(filename, ".json")) {
-      body <- paste(readLines(filename, encoding="UTF-8", warn = FALSE), collapse = "\n");
-      jsons <- c(jsons, body)
-    }
-  }
-
-  send_msg(queue, jsons,
-           query= list(
-             MessageAttribute.1.Name= "type",
-             MessageAttribute.1.Value.DataType="String",
-             MessageAttribute.1.Value.StringValue="topic"
-           )
-  );
+post_job <- function(queue, json, type) {
+  message(sprintf("Posting %s job...", type))
+  send_msg(queue,
+           msg = json,
+           query = sqs_attributes)
 }

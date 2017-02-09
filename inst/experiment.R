@@ -1,6 +1,5 @@
 library(RPackageParser)
-p <- list(path = "https://s3.amazonaws.com/assets.rdocumentation.org/rpackages/archived/base/base_3.3.1.tar.gz",
-          name = "base",
-          version = "3.3.1",
-          repoType = "part_of_r")
+p <- list(path = "ftp://cran.r-project.org/pub/R/src/contrib/00Archive/tutorial/tutorial_0.4.0.tar.gz",
+          name = "tutorial",
+          repoType = "cran")
 process_package(p$path, p$name, p$repoType)
