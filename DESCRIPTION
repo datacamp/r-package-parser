@@ -9,14 +9,15 @@ BugReports: https://github.com/datacamp/r-package-parser/issues
 Description: This package is amazing.
 License: MIT + file LICENSE
 LazyData: TRUE
-Depends: R (>= 3.0.0)
+Depends: 
+  R (>= 3.0.0),
+  pkgdown
 Imports:
   jsonlite,
   aws.sqs,
-  stringr,
-  pkgdown
+  stringr
 Remotes:
-  hadley/pkgdown
+  filipsch/pkgdown
 Suggests:
   testthat
 RoxygenNote: 6.0.1

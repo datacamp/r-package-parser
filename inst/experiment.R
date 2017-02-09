@@ -1,5 +1,5 @@
 library(RPackageParser)
-p <- list(path = "ftp://cran.r-project.org/pub/R/src/contrib/00Archive/tutorial/tutorial_0.4.0.tar.gz",
-          name = "tutorial",
-          repoType = "cran")
-process_package(p$path, p$name, p$repoType)
+p <- list(path = "http://bioconductor.org/packages/release/bioc/src/contrib/destiny_2.0.3.tar.gz",
+          name = "destiny",
+          repoType = "bioconductor")
+res <- process_package(p$path, p$name, p$repoType)

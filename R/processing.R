@@ -16,6 +16,7 @@ get_description <- function(pkg_folder) {
 }
 
 #' @importFrom jsonlite toJSON
+#' @export
 parse_description <- function(pkg_folder, repo_type) {
   message("Parsing DESCRIPTION file ...")
   description <- get_description(pkg_folder)
@@ -35,12 +36,13 @@ parse_description <- function(pkg_folder, repo_type) {
 #' @importFrom magrittr %>%
 #' @importFrom jsonlite toJSON
 #' @importFrom purrr transpose map
+#' @export
 parse_topics <- function(pkg_folder) {
   message("Parsing topics ...")
   pkg <- pkgdown:::as_pkgdown(pkg_folder)
   pkg$topics %>%
     transpose() %>%
-    map(pkgdown:::data_reference_topic, pkg) %>%
+    map(pkgdown:::data_reference_topic, pkg, examples = FALSE) %>%
     map(clean_up) %>%
     map(add_pkg_info, pkg_folder) %>%
     map(toJSON)
@@ -80,3 +82,5 @@ add_pkg_info <- function(topic_data, pkg_folder) {
   topic_data$package <- list(package = description$Package, version = description$Version)
   return(topic_data)
 }
+
+

@@ -2,10 +2,10 @@
 % Please edit documentation in R/processing.R
 \name{process_package}
 \alias{process_package}
-\title{Handles package version}
+\title{Process a package:}
 \usage{
 process_package(pkg_url, pkg_name, repo_type)
 }
 \description{
-Handles package version
+Process a package:
 }
