@@ -45,7 +45,7 @@ parse_topics <- function(pkg_folder) {
     map(pkgdown:::data_reference_topic, pkg, examples = FALSE) %>%
     map(clean_up) %>%
     map(add_pkg_info, pkg_folder) %>%
-    map(toJSON)
+    map(toJSON, auto_unbox = TRUE)
 }
 
 clean_up <- function(data) {

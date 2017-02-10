@@ -27,12 +27,18 @@ test_that("works for bioconductor package", {
   # TODO
 })
 
-test_that("works for baked-in R package", {
-  expect_true(TRUE)
+test_that("works for github package", {
+  p <- list(path = "https://github.com/datacamp/testwhat/archive/v4.2.6.tar.gz",
+            name = "testwhat",
+            repoType = "github")
+  res <- process_package(p$path, p$name, p$repoType)
   # TODO
 })
 
-test_that("works for github package", {
-  expect_true(TRUE)
+test_that("works for baked-in R package", {
+  p <- list(path = "https://s3.amazonaws.com/assets.rdocumentation.org/rpackages/archived/base/base_3.3.1.tar.gz",
+            name = "base",
+            repoType = "part_of_r")
+  res <- process_package(p$path, p$name, p$repoType)
   # TODO
 })
