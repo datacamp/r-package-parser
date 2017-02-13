@@ -34,9 +34,9 @@ main <- function() {
 
         result <- tryCatch({
           res <- process_package(body$path, body$name, repo_type)
+          dump_jsons_on_s3(res$description, res$topics)
           post_job(to_queue, toJSON(res$description, auto_unbox = TRUE), "version")
           post_job(to_queue, sapply(res$topics, toJSON, auto_unbox = TRUE), "topic")
-          dump_jsons_on_s3(res$description, res$topics)
         },
         error = function(e) {
           error_json <- toJSON(list(error = e$message,

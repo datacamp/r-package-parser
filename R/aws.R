@@ -1,6 +1,6 @@
 dump_jsons_on_s3 <- function(description, topics) {
-  pkg_name <- res$description$Package
-  pkg_version <- res$description$Version
+  pkg_name <- description$Package
+  pkg_version <- description$Version
   local <- file.path(getwd(), pkg_name, pkg_version)
   remote <- file.path("s3://assets.rdocumentation.org/rpackages/unarchived", local)
   # write files to disk
