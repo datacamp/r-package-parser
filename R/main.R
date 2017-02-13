@@ -5,10 +5,6 @@
 #' @importFrom jsonlite fromJSON toJSON prettify
 main <- function() {
 
-  Sys.setenv(AWS_ACCESS_KEY_ID = "AKIAJVTIJ7AIE5TMHOBQ",
-             AWS_SECRET_ACCESS_KEY = "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",
-             AWS_DEFAULT_REGION = "us-west-1")
-
   # names for the queues
   from_queue <- "RdocRWorkerQueue"
   to_queue <- "RdocWorkerQueue"
