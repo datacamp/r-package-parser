@@ -11,11 +11,10 @@ License: MIT + file LICENSE
 LazyData: TRUE
 Depends: 
   R (>= 3.0.0),
-  pkgdown
+  pkgdown,
+  aws.sqs
 Imports:
-  jsonlite,
-  aws.sqs,
-  stringr
+  jsonlite
 Remotes:
   filipsch/pkgdown
 Suggests:

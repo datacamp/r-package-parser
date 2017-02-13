@@ -61,9 +61,8 @@ clean_up <- function(data) {
       keyname <- pull_out[section$title == pull_out$pkgdown, "rdocs"]
       data[[keyname]] <- section$contents
     } else {
-      # clean it up - formatted 'name' and 'description'
       cleaned_up_sections <- c(cleaned_up_sections,
-                               list(list(name = section$title, description = section$contents)))
+                               list(section[c('title', 'contents')]))
     }
   }
   data$sections <- cleaned_up_sections

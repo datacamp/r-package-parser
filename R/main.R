@@ -5,14 +5,18 @@
 #' @importFrom jsonlite fromJSON toJSON prettify
 main <- function() {
 
+  Sys.setenv(AWS_ACCESS_KEY_ID = "AKIAJVTIJ7AIE5TMHOBQ",
+             AWS_SECRET_ACCESS_KEY = "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",
+             AWS_DEFAULT_REGION = "us-west-1")
+
   # names for the queues
-  to_queue <- "RdocWorkerQueue"
   from_queue <- "RdocRWorkerQueue"
+  to_queue <- "RdocWorkerQueue"
   error_queue <- "RdocRWorkerDeadQueue"
 
   # initialize the queues
-  create_queue(to_queue)
   create_queue(from_queue)
+  create_queue(to_queue)
   create_queue(error_queue)
 
   while(1) {
@@ -30,9 +34,9 @@ main <- function() {
 
         result <- tryCatch({
           res <- process_package(body$path, body$name, repo_type)
-          # post_job(to_queue, res$description, "description")
-          # post_job(to_queue, res$topics, "topics")
-          # dump_jsons_on_s3(topics_json, desciption_json)
+          post_job(to_queue, res$description, "version")
+          post_job(to_queue, unlist(res$topics), "topic")
+          # dump_jsons_on_s3(topics_json, description_json)
         },
         error = function(e) {
           error_json <- toJSON(list(error = e$message,
