@@ -49,8 +49,8 @@ parse_topics <- function(pkg_folder) {
 
 clean_up <- function(data) {
   # pkgdown puts things in sections that rdocs doesn't want in sections.
-  pull_out <- data.frame(pkgdown = c("Details", "References", "Source", "See also", "Value"),
-                         rdocs = c("details", "references", "source", "seealso", "value"),
+  pull_out <- data.frame(pkgdown = c("Details", "References", "Source", "See also", "Value", "Note"),
+                         rdocs = c("details", "references", "source", "seealso", "value", "note"),
                          stringsAsFactors = FALSE)
 
   cleaned_up_sections <- list()
