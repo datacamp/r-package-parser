@@ -24,7 +24,13 @@ test_that("works for bioconductor package", {
             name = "destiny",
             repoType = "bioconductor")
   res <- process_package(p$path, p$name, p$repoType)
-  # TODO
+  desc <- jsonlite::fromJSON(res$description, simplifyDataFrame = FALSE)
+  expect_equal(desc$Package, "destiny")
+  expect_equal(desc$Version, "2.0.3")
+  expect_equal(desc$readme, "")
+  expect_equal(desc$repoType, "bioconductor")
+  topics <- purrr:::map(res$topics, jsonlite::fromJSON, simplifyDataFrame = FALSE)
+  expect_equal(length(topics), 27)
 })
 
 test_that("works for github package", {
@@ -32,7 +38,13 @@ test_that("works for github package", {
             name = "testwhat",
             repoType = "github")
   res <- process_package(p$path, p$name, p$repoType)
-  # TODO
+  desc <- jsonlite::fromJSON(res$description, simplifyDataFrame = FALSE)
+  expect_equal(desc$Package, "testwhat")
+  expect_equal(desc$Version, "4.2.6")
+  expect_true(grepl("Submission Correctness Tests", desc$readme, fixed = TRUE))
+  expect_equal(desc$repoType, "github")
+  topics <- purrr:::map(res$topics, jsonlite::fromJSON, simplifyDataFrame = FALSE)
+  expect_equal(length(topics), 41)
 })
 
 test_that("works for baked-in R package", {
@@ -40,5 +52,11 @@ test_that("works for baked-in R package", {
             name = "base",
             repoType = "part_of_r")
   res <- process_package(p$path, p$name, p$repoType)
-  # TODO
+  desc <- jsonlite::fromJSON(res$description, simplifyDataFrame = FALSE)
+  expect_equal(desc$Package, "base")
+  expect_equal(desc$Version, "3.3.1")
+  expect_equal(desc$readme, "")
+  expect_equal(desc$repoType, "part_of_r")
+  topics <- purrr:::map(res$topics, jsonlite::fromJSON, simplifyDataFrame = FALSE)
+  expect_equal(length(topics), 427 + 2 + 1)
 })
