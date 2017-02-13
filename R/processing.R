@@ -3,11 +3,11 @@
 process_package <- function(pkg_url, pkg_name, repo_type) {
   message(sprintf("Processing package at %s ...", pkg_url))
   pkg_folder <- download_and_unpack(pkg_url, pkg_name)
-  description_json <- parse_description(pkg_folder, repo_type)
-  topics_json <- parse_topics(pkg_folder)
+  description <- parse_description(pkg_folder, repo_type)
+  topics <- parse_topics(pkg_folder)
   delete_files()
-  return(list(description = description_json,
-              topics = topics_json))
+  return(list(description = description,
+              topics = topics))
 }
 
 get_description <- function(pkg_folder) {
@@ -30,7 +30,7 @@ parse_description <- function(pkg_folder, repo_type) {
     description$readme <- ""
   }
 
-  return(toJSON(description, auto_unbox = TRUE))
+  return(description)
 }
 
 #' @importFrom magrittr %>%
@@ -44,8 +44,7 @@ parse_topics <- function(pkg_folder) {
     transpose() %>%
     map(pkgdown:::data_reference_topic, pkg, examples = FALSE) %>%
     map(clean_up) %>%
-    map(add_pkg_info, pkg_folder) %>%
-    map(toJSON, auto_unbox = TRUE)
+    map(add_pkg_info, pkg_folder)
 }
 
 clean_up <- function(data) {

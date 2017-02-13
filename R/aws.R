@@ -1,7 +1,16 @@
-dump_jsons_on_s3 <- function(package_name) {
-  message("Syncing S3 (disabled for now) ...")
-  # package_path <- paste(package_name, sep= "/")
-  # system(sprintf("aws s3 sync jsons/%s s3://assets.rdocumentation.org/rpackages/unarchived/%s", package_path, package_path))
+dump_jsons_on_s3 <- function(description, topics) {
+  pkg_name <- res$description$Package
+  pkg_version <- res$description$Version
+  local <- file.path(getwd(), pkg_name, pkg_version)
+  remote <- file.path("s3://assets.rdocumentation.org/rpackages/unarchived", local)
+  # write files to disk
+  dir.create(local, recursive = TRUE)
+  write_json(res$description, auto_unbox = TRUE, path = file.path(local, "DESCRIPTION.json"))
+  lapply(res$topics, function(x) write_json(x, auto_unbox = TRUE, path = file.path(local, paste0(x$name, ".json"))))
+  # do the sync
+  system(sprintf("aws s3 sync %s %s", local, remote))
+  # clean up again
+  unlink(file.path(getwd(), pkg_name), recursive = TRUE)
 }
 
 send_msg <- function(queue, msg, query = list(), attributes = NULL, delay = NULL, ...) {
