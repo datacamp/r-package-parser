@@ -5,6 +5,10 @@
 #' @importFrom jsonlite fromJSON toJSON prettify
 main <- function() {
 
+  if(file.exists(".env.R")) {
+    source(".env.R")
+  }
+
   # names for the queues
   from_queue <- "RdocRWorkerQueue"
   to_queue <- "RdocWorkerQueue"
