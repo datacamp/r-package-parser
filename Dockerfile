@@ -7,6 +7,6 @@ RUN rm -rf /home/repl/.aws \
   && wget https://github.com/jgm/pandoc/releases/download/1.19.1/pandoc-1.19.1-1-amd64.deb && dpkg -i pandoc-1.19.1-1-amd64.deb
 
 RUN R -e 'devtools::install_github("filipsch/pkgdown", ref = "v0.0.1")' \
-  && R -e 'devtools::install_github("datacamp/r-package-parser")'
+  && R -e 'devtools::install_github("datacamp/r-package-parser", ref = "v0.0.1")'
 
 CMD ["R", "-e", "RPackageParser::main()"]

@@ -6,8 +6,8 @@ dump_jsons_on_s3 <- function(description, topics) {
   remote <- file.path("s3://assets.rdocumentation.org/rpackages/unarchived", local)
   # write files to disk
   dir.create(local, recursive = TRUE)
-  write_json(res$description, auto_unbox = TRUE, path = file.path(local, "DESCRIPTION.json"))
-  lapply(res$topics, function(x) write_json(x, auto_unbox = TRUE, path = file.path(local, paste0(x$name, ".json"))))
+  write_json(description, auto_unbox = TRUE, path = file.path(local, "DESCRIPTION.json"))
+  lapply(topics, function(x) write_json(x, auto_unbox = TRUE, path = file.path(local, paste0(x$name, ".json"))))
   # do the sync
   system(sprintf("aws s3 sync %s %s", local, remote))
   # clean up again
