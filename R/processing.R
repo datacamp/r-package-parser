@@ -66,9 +66,6 @@ clean_up <- function(data) {
   }
   data$sections <- cleaned_up_sections
 
-  # aliases should be called alias
-  names(data)[names(data) == "aliases"] <- "alias"
-
   # unpack description
   data$description <- data$description$contents
 
