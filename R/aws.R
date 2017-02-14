@@ -1,3 +1,4 @@
+#' @importFrom jsonlite write_json
 dump_jsons_on_s3 <- function(description, topics) {
   pkg_name <- description$Package
   pkg_version <- description$Version
