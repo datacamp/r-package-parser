@@ -3,7 +3,7 @@ dump_jsons_on_s3 <- function(description, topics) {
   pkg_name <- description$Package
   pkg_version <- description$Version
   local <- file.path(getwd(), pkg_name, pkg_version)
-  remote <- file.path("s3://assets.rdocumentation.org/rpackages/unarchived", local)
+  remote <- file.path("s3://assets.rdocumentation.org/rpackages/unarchived", pkg_name, pkg_version)
   # write files to disk
   dir.create(local, recursive = TRUE)
   write_json(description, auto_unbox = TRUE, path = file.path(local, "DESCRIPTION.json"))
