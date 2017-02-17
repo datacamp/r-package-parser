@@ -5,7 +5,6 @@ process_package <- function(pkg_url, pkg_name, repo_type) {
   pkg_folder <- download_and_unpack(pkg_url, pkg_name)
   description <- parse_description(pkg_folder, repo_type)
   topics <- parse_topics(pkg_folder)
-  delete_files()
   return(list(description = description,
               topics = topics))
 }

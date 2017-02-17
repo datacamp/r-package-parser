@@ -45,6 +45,7 @@ main <- function() {
           cat(prettify(error_json))
           post_job(error_queue, error_json, "error")
         }, finally = {
+          delete_files()
           message("Deleting job from SQS ...")
           delete_msg(from_queue, message$ReceiptHandle)
           message("Garbage collection ...")
