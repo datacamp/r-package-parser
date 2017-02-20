@@ -25,6 +25,7 @@ main <- function() {
     if(nrow(messages) > 0) {
 
       for (i in 1:nrow(messages)) {
+        delete_files()
         message <- as.list(messages[i, ])
         body <- fromJSON(message$Body)
         repo_type <- body$repoType
