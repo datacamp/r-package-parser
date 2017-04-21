@@ -15,6 +15,7 @@ get_description <- function(pkg_folder) {
 }
 
 #' @importFrom jsonlite toJSON
+#' @importFrom purrr map
 #' @export
 parse_description <- function(pkg_folder, pkg_url, repo_type) {
   message("Parsing DESCRIPTION file ...")
@@ -83,7 +84,7 @@ add_pkg_info <- function(topic_data, pkg_folder) {
 }
 formatAuthor <- function(author) {
   return(list(name = paste(author$given, author$family),
-              email = ifelse(is.null(author$email), NA, author$email),
+              email = if (is.null(author$email)) NA else author$email,
               maintainer = ("cre" %in% author$role)))
 }
 
