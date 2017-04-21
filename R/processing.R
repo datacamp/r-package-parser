@@ -3,7 +3,7 @@
 process_package <- function(pkg_url, pkg_name, repo_type) {
   message(sprintf("Processing package at %s ...", pkg_url))
   pkg_folder <- download_and_unpack(pkg_url, pkg_name)
-  description <- parse_description(pkg_folder, repo_type)
+  description <- parse_description(pkg_folder, pkg_url, repo_type)
   topics <- parse_topics(pkg_folder)
   return(list(description = description,
               topics = topics))
@@ -15,12 +15,18 @@ get_description <- function(pkg_folder) {
 }
 
 #' @importFrom jsonlite toJSON
+#' @importFrom purrr map
 #' @export
-parse_description <- function(pkg_folder, repo_type) {
+parse_description <- function(pkg_folder, pkg_url, repo_type) {
   message("Parsing DESCRIPTION file ...")
   description <- get_description(pkg_folder)
   description$repoType <- repo_type
+  description$tarballUrl <- pkg_url
 
+  if(!is.null(description$`Authors@R`)) {
+    authors <- eval(parse(text=description$`Authors@R`))
+    description$jsonAuthors <- authors %>% map(formatAuthor)
+  }
   # Add readme, if any
   readme_path <- file.path(pkg_folder, "README.md")
   if (file.exists(readme_path)) {
@@ -76,5 +82,9 @@ add_pkg_info <- function(topic_data, pkg_folder) {
   topic_data$package <- list(package = description$Package, version = description$Version)
   return(topic_data)
 }
-
+formatAuthor <- function(author) {
+  return(list(name = paste(author$given, author$family),
+              email = if (is.null(author$email)) NA else author$email,
+              maintainer = ("cre" %in% author$role)))
+}
 
