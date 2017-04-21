@@ -24,8 +24,12 @@ parse_description <- function(pkg_folder, pkg_url, repo_type) {
   description$tarballUrl <- pkg_url
 
   if(!is.null(description$`Authors@R`)) {
-    authors <- eval(parse(text=description$`Authors@R`))
-    description$jsonAuthors <- authors %>% map(formatAuthor)
+    authors <- as.person(eval(parse(text=description$`Authors@R`)))
+    tryCatch({
+      description$jsonAuthors <- authors %>% map(formatAuthor)
+    }, error = function(e) {
+      description$Author <- authors
+    })
   }
   # Add readme, if any
   readme_path <- file.path(pkg_folder, "README.md")
