@@ -10,7 +10,7 @@ dump_jsons_on_s3 <- function(description, topics) {
   # copy everything from man/figures to local/figures
   pkg_folder <- file.path("packages", pkg_name)
   figures_path <- file.path(pkg_folder, "man", "figures")
-  if (file.exists(figures_path) && !is.null(path)) {
+  if (file.exists(figures_path) && !is.null(figures_path)) {
     out_path <- file.path(local, "figures")
     dir.create(out_path)
     pkgdown:::copy_dir(figures_path, out_path)
