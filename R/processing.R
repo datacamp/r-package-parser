@@ -48,7 +48,7 @@ parse_description <- function(pkg_folder, pkg_url, repo_type) {
 #' @export
 parse_topics <- function(pkg_folder) {
   message("Parsing topics ...")
-  unlink(file.path(pkg_folder, "vignettes"), recursive = TRUE)
+  file.rename(file.path(pkg_folder, "vignettes"), file.path(pkg_folder, "_vignettes"))
   pkg <- pkgdown:::as_pkgdown(pkg_folder)
   pkg$topics %>%
     transpose() %>%

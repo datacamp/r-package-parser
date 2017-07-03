@@ -16,6 +16,14 @@ dump_jsons_on_s3 <- function(description, topics) {
     pkgdown:::copy_dir(figures_path, out_path)
   }
 
+  # copy everything from _vignettes to local/vignettes
+  vignettes_path <- file.path(pkg_folder, "_vignettes")
+  if (file.exists(vignettes_path) && !is.null(vignettes_path)) {
+    out_path <- file.path(local, "vignettes")
+    dir.create(out_path)
+    pkgdown:::copy_dir(vignettes_path, out_path)
+  }
+
   # write files to disk
   write_json(description, auto_unbox = TRUE, path = file.path(local, "DESCRIPTION.json"))
   lapply(topics, function(x) write_json(x, auto_unbox = TRUE, path = file.path(local, paste0(x$name, ".json"))))
