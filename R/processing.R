@@ -3,10 +3,19 @@
 process_package <- function(pkg_url, pkg_name, repo_type) {
   message(sprintf("Processing package at %s ...", pkg_url))
   pkg_folder <- download_and_unpack(pkg_url, pkg_name)
+  rename_lowercase_rd_files(pkg_folder)
+
   description <- parse_description(pkg_folder, pkg_url, repo_type)
   topics <- parse_topics(pkg_folder)
   return(list(description = description,
               topics = topics))
+}
+
+rename_lowercase_rd_files <- function(pkg_folder){
+  lowercase_files = dir(pkg_folder, pattern = "\\.rd$", full.names = TRUE, recursive = TRUE)
+  sapply(lowercase_files,FUN=function(path){
+      file.rename(from=path,to=sub(pattern=".rd",replacement=".Rd",path))
+  })
 }
 
 get_description <- function(pkg_folder) {
