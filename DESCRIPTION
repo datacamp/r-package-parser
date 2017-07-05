@@ -1,7 +1,7 @@
 Package: RPackageParser
 Type: Package
 Title: Parse R packages to get the documentation.
-Version: 0.0.7
+Version: 0.0.8
 Author: Filip Schouwenaars
 Maintainer: Filip Schouwenaars <filip@datacamp.com>
 URL: http://www.datacamp.com

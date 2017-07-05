@@ -6,7 +6,7 @@ RUN rm -rf /home/repl/.aws \
   && apt-get update && apt-get install -y libxml2-dev libmagick++-dev \
   && wget https://github.com/jgm/pandoc/releases/download/1.19.1/pandoc-1.19.1-1-amd64.deb && dpkg -i pandoc-1.19.1-1-amd64.deb
 
-RUN R -e 'devtools::install_github("datacamp/pkgdown", ref = "v0.0.2")' \
-  && R -e 'devtools::install_github("datacamp/r-package-parser", ref = "v0.0.7")'
+RUN R -e 'devtools::install_github("datacamp/pkgdown", ref = "v0.0.3")' \
+  && R -e 'devtools::install_github("datacamp/r-package-parser", ref = "v0.0.8")'
 
 CMD ["R", "-e", "RPackageParser::main()"]
