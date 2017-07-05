@@ -10,27 +10,15 @@ dump_jsons_on_s3 <- function(description, topics) {
   # copy everything from man/figures to local/figures
   pkg_folder <- file.path("packages", pkg_name)
   figures_path <- file.path(pkg_folder, "man", "figures")
-  if (file.exists(figures_path) && !is.null(figures_path)) {
-    out_path <- file.path(local, "figures")
-    dir.create(out_path)
-    pkgdown:::copy_dir(figures_path, out_path)
-  }
+  copy_local(figures_path, "figures")
 
   # copy everything from _vignettes to local/vignettes
   vignettes_path <- file.path(pkg_folder, "_vignettes")
-  if (file.exists(vignettes_path) && !is.null(vignettes_path)) {
-    out_path <- file.path(local, "vignettes")
-    dir.create(out_path)
-    pkgdown:::copy_dir(vignettes_path, out_path)
-  }
+  copy_local(vignettes_path, "vignettes")
 
   # copy everything from R to local/R
   r_path <- file.path(pkg_folder, "R")
-  if (file.exists(r_path) && !is.null(r_path)) {
-    out_path <- file.path(local, "R")
-    dir.create(out_path)
-    pkgdown:::copy_dir(r_path, out_path)
-  }
+  copy_local(r_path, "R")
 
   # write files to disk
   write_json(description, auto_unbox = TRUE, path = file.path(local, "DESCRIPTION.json"))
@@ -39,6 +27,14 @@ dump_jsons_on_s3 <- function(description, topics) {
   system(sprintf("aws --region us-east-1 s3 sync %s %s", local, remote))
   # clean up again
   unlink(file.path(getwd(), pkg_name), recursive = TRUE)
+}
+
+copy_local <- function(path, dirname){
+  if (file.exists(path) && !is.null(path)) {
+    out_path <- file.path(local, dirname)
+    dir.create(out_path)
+    pkgdown:::copy_dir(path, out_path)
+  }
 }
 
 send_msg <- function(queue, msg, query = list(), attributes = NULL, delay = NULL, ...) {
