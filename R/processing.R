@@ -6,6 +6,7 @@ process_package <- function(pkg_url, pkg_name, repo_type) {
   rename_lowercase_rd_files(pkg_folder)
 
   description <- parse_description(pkg_folder, pkg_url, repo_type)
+  definedTopic <- findTopicDefinitions(pkg_folder)
   topics <- parse_topics(pkg_folder)
   return(list(description = description,
               topics = topics))
@@ -102,3 +103,58 @@ formatAuthor <- function(author) {
               maintainer = ("cre" %in% author$role)))
 }
 
+#' @export
+findTopicDefinitions <- function(pkg_folder) {
+  message("Parsing topic definitions ...")
+  files = dir(file.path(pkg_folder, "R"), pattern = "\\.(r|R)$", full.names = TRUE, recursive = TRUE)
+  sapply(files, getDeclaredFunctionsInFile)
+}
+
+findDefinitionsOfTopic <- function(topicDefinitions, topic_name){
+  y <- topicDefinitions[sapply(topicDefinitions, FUN=function(item){
+    topic_name %in% names(item)
+  })];
+  lapply(y, FUN=function(item){
+    item[[topic_name]]
+  });
+}
+
+#' Based on NCmisc::Rfile.indexr
+getDeclaredFunctionsInFile <- function(fn)
+{
+  grp <- function(what,ins) { grep(what,ins,fixed=T) }
+  if(file.exists(fn))  {
+    fl <- readLines(fn)
+    fn.lines <- unique(c(grp("<- function",fl),grp("<-function",fl)))
+
+
+    #fl <- rmv.spc(fl)
+    nfn <- length(fn.lines)
+    fn.list <- vector("list",nfn)
+    if(nfn<1) { warning(sprintf("no functions found in R %s", fn)); return(NULL) }
+    for (kk in 1:nfn) {
+      first.ln <- fl[fn.lines[kk]]
+      n <- 1; while(substr(first.ln,n,n)!="<" & substr(first.ln,n,n)!=" ") { n <- n+1 }
+      fn.nm <- substr(first.ln,1,n-1);
+      name <- paste("",fn.nm,"",sep="");
+
+      if(! startsWith(name, "#")){
+        if(! fn.nm %in% names(fn.list)){
+          names(fn.list)[kk] <- name; descr <- c()
+          fn.list[[kk]] <- c(fn.lines[kk])
+        }
+        else{
+          # Add line number to existing function
+          fn.list[[name]] <- c(fn.list[[name]], fn.lines[kk])
+        }
+      }
+    }
+
+    # remove extra's
+    fn.list <- fn.list[!sapply(fn.list, is.null)]
+  } else {
+    warning("could not find function file to index")
+    return(NULL)
+  }
+  return(fn.list)
+}
