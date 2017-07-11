@@ -6,7 +6,6 @@ process_package <- function(pkg_url, pkg_name, repo_type) {
   rename_lowercase_rd_files(pkg_folder)
 
   description <- parse_description(pkg_folder, pkg_url, repo_type)
-  definedTopic <- findTopicDefinitions(pkg_folder)
   topics <- parse_topics(pkg_folder)
   return(list(description = description,
               topics = topics))
@@ -59,12 +58,14 @@ parse_description <- function(pkg_folder, pkg_url, repo_type) {
 parse_topics <- function(pkg_folder) {
   message("Parsing topics ...")
   file.rename(file.path(pkg_folder, "vignettes"), file.path(pkg_folder, "_vignettes"))
+  definedTopics <- findTopicDefinitions(pkg_folder)
   pkg <- pkgdown:::as_pkgdown(pkg_folder)
   pkg$topics %>%
     transpose() %>%
     map(pkgdown:::data_reference_topic, pkg, examples = FALSE) %>%
     map(clean_up) %>%
-    map(add_pkg_info, pkg_folder)
+    map(add_pkg_info, pkg_folder) %>%
+    map(add_definition_info, definedTopics)
 }
 
 clean_up <- function(data) {
@@ -103,7 +104,11 @@ formatAuthor <- function(author) {
               maintainer = ("cre" %in% author$role)))
 }
 
-#' @export
+add_definition_info <- function(topic_data, topicDefinitions){
+  topic_data$definitions <- findDefinitionsOfTopic(topicDefinitions, topic_data$name)
+  return(topic_data)
+}
+
 findTopicDefinitions <- function(pkg_folder) {
   message("Parsing topic definitions ...")
   files = dir(file.path(pkg_folder, "R"), pattern = "\\.(r|R)$", full.names = TRUE, recursive = TRUE)
@@ -114,9 +119,14 @@ findDefinitionsOfTopic <- function(topicDefinitions, topic_name){
   y <- topicDefinitions[sapply(topicDefinitions, FUN=function(item){
     topic_name %in% names(item)
   })];
-  lapply(y, FUN=function(item){
+  y <- lapply(y, FUN=function(item){
     item[[topic_name]]
   });
+  names(y) <- sapply(names(y), FUN=function(name){
+    splitted <- strsplit(name, "/R/")[[1]]
+    splitted[length(splitted)]
+  });
+  y;
 }
 
 #' Based on NCmisc::Rfile.indexr
@@ -127,11 +137,12 @@ getDeclaredFunctionsInFile <- function(fn)
     fl <- readLines(fn)
     fn.lines <- unique(c(grp("<- function",fl),grp("<-function",fl)))
 
-
-    #fl <- rmv.spc(fl)
     nfn <- length(fn.lines)
     fn.list <- vector("list",nfn)
-    if(nfn<1) { warning(sprintf("no functions found in R %s", fn)); return(NULL) }
+    if(nfn<1) {
+      #warning(sprintf("no functions found in R %s", fn));
+      return(NULL)
+    }
     for (kk in 1:nfn) {
       first.ln <- fl[fn.lines[kk]]
       n <- 1; while(substr(first.ln,n,n)!="<" & substr(first.ln,n,n)!=" ") { n <- n+1 }
