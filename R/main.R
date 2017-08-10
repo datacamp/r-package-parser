@@ -4,6 +4,7 @@
 #' @importFrom aws.sqs create_queue receive_msg delete_msg
 #' @importFrom jsonlite fromJSON toJSON prettify
 main <- function() {
+  parser_version <- 1
 
   if(file.exists(".env.R")) {
     source(".env.R")
@@ -35,6 +36,7 @@ main <- function() {
 
         result <- tryCatch({
           res <- process_package(body$path, body$name, repo_type)
+          res$description$parserVersion <- parser_version
           dump_jsons_on_s3(res$description, res$topics)
           post_job(to_queue, toJSON(res$description, auto_unbox = TRUE), "version")
           post_job(to_queue, sapply(res$topics, toJSON, auto_unbox = TRUE), "topic")
