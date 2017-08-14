@@ -10,15 +10,15 @@ dump_jsons_on_s3 <- function(description, topics) {
   # copy everything from man/figures to local/figures
   pkg_folder <- file.path("packages", pkg_name)
   figures_path <- file.path(pkg_folder, "man", "figures")
-  copy_local(figures_path, "figures")
+  copy_local(local, figures_path, "figures")
 
   # copy everything from _vignettes to local/vignettes
   vignettes_path <- file.path(pkg_folder, "_vignettes")
-  copy_local(vignettes_path, "vignettes")
+  copy_local(local, vignettes_path, "vignettes")
 
   # copy everything from R to local/R
   r_path <- file.path(pkg_folder, "R")
-  copy_local(r_path, "R")
+  copy_local(local, r_path, "R")
 
   # write files to disk
   write_json(description, auto_unbox = TRUE, path = file.path(local, "DESCRIPTION.json"))
@@ -29,7 +29,7 @@ dump_jsons_on_s3 <- function(description, topics) {
   unlink(file.path(getwd(), pkg_name), recursive = TRUE)
 }
 
-copy_local <- function(path, dirname){
+copy_local <- function(local, path, dirname){
   if (file.exists(path) && !is.null(path)) {
     out_path <- file.path(local, dirname)
     dir.create(out_path)
