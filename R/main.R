@@ -34,19 +34,32 @@ main <- function() {
           repo_type <- 'cran'
         }
 
+        tm <- as.POSIXlt(Sys.time(), Sys.timezone(), "%Y-%m-%dT%H:%M:%S")
+        datetime <- format(tm , "%Y-%m-%dT%H:%M:%S%z")
         result <- tryCatch({
           res <- process_package(body$path, body$name, repo_type)
-          res$description$parserVersion <- parser_version
+          res$description$jobInfo <- list(package = body$name,
+                                          version = body$version,
+                                          parsingStatus = "succes",
+                                          parserVersion = parser_version,
+                                          parsedAt = datetime)
           dump_jsons_on_s3(res$description, res$topics)
           post_job(to_queue, toJSON(res$description, auto_unbox = TRUE), "version")
           post_job(to_queue, sapply(res$topics, toJSON, auto_unbox = TRUE), "topic")
         },
         error = function(e) {
-          error_json <- toJSON(list(error = e$message,
-                                    package = body$name,
-                                    version = body$version))
+          errorObject <- character(0)
+          errorObject$jobInfo <-  list(error = e$message,
+                                        package = body$name,
+                                        version = body$version,
+                                        parsingStatus = "failed",
+                                        parserVersion = parser_version,
+                                        parsedAt = datetime)
+
+          error_json <- toJSON(errorObject, auto_unbox = TRUE)
           cat(prettify(error_json))
           post_job(error_queue, error_json, "error")
+          post_job(to_queue, error_json, 'version')
         }, finally = {
           delete_files()
           message("Deleting job from SQS ...")
