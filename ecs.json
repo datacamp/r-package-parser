@@ -1,0 +1,14 @@
+{
+  "cluster": "${CLUSTER}",
+  "serviceProtocol": "none",
+  "desiredCount": ${DESIRED_COUNT},
+  "containers": [
+    {
+      "containerName": "${SERVICE}",
+      "containerImage": "${SERVICE}",
+      "containerTag": "${CIRCLE_SHA1}",
+      "memoryReservation": 1024,
+      "essential": true
+    }
+  ]
+}

@@ -6,7 +6,16 @@ RUN rm -rf /home/repl/.aws \
   && apt-get update && apt-get install -y libxml2-dev libmagick++-dev \
   && wget https://github.com/jgm/pandoc/releases/download/1.19.1/pandoc-1.19.1-1-amd64.deb && dpkg -i pandoc-1.19.1-1-amd64.deb
 
-RUN R -e 'devtools::install_github("datacamp/pkgdown", ref = "v0.0.3")' \
-  && R -e 'devtools::install_github("datacamp/r-package-parser", ref = "v0.0.9")'
+RUN curl -o /tmp/aws-env-linux-amd64 -L https://github.com/datacamp/aws-env/releases/download/v0.1-session-fix/aws-env-linux-amd64 && \
+  chmod +x /tmp/aws-env-linux-amd64 && \
+  mv /tmp/aws-env-linux-amd64 /bin/aws-env
+
+RUN R -e 'devtools::install_github("datacamp/pkgdown", ref = "v0.0.3")' 
+RUN R -e 'install.packages("aws.sqs", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))'
+
+COPY . r-package-parser
+
+RUN R CMD build r-package-parser
+RUN R CMD INSTALL r-package-parser
 
 CMD ["R", "-e", "RPackageParser::main()"]
