@@ -15,6 +15,7 @@ jobs:
       - run:
           name: Build application docker image
           command: |
+            docker login -p ${DOCKERHUB_PASSWORD} -u ${DOCKERHUB_USER} dockerhub.datacamp.com:443
             docker build -t ${STAGING_ECR_URL}/${SERVICE}:${CIRCLE_SHA1} .
       - run:
           name: Push image
