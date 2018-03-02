@@ -11,9 +11,9 @@ main <- function() {
   }
 
   # names for the queues
-  from_queue <- "RdocRWorkerQueue"
-  to_queue <- "RdocWorkerQueue"
-  error_queue <- "RdocRWorkerDeadQueue"
+  from_queue <- Sys.getenv("SOURCE_QUEUE")
+  to_queue <- Sys.getenv("DEST_QUEUE")
+  error_queue <- Sys.getenv("DEADLETTER_QUEUE")
 
   # initialize the queues
   create_queue(from_queue)
