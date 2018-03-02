@@ -40,7 +40,7 @@ main <- function() {
           res <- process_package(body$path, body$name, repo_type)
           res$description$jobInfo <- list(package = body$name,
                                           version = body$version,
-                                          parsingStatus = "succes",
+                                          parsingStatus = "success",
                                           parserVersion = parser_version,
                                           parsedAt = datetime)
           dump_jsons_on_s3(res$description, res$topics)
