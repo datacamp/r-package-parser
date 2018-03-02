@@ -8,7 +8,12 @@
       "containerImage": "${SERVICE}",
       "containerTag": "${CIRCLE_SHA1}",
       "memoryReservation": 1024,
-      "essential": true
+      "essential": true,
+      "containerCommand": [
+        "bash",
+        "-c",
+        "eval $(aws-env) && R -e RPackageParser::main()"
+      ],
     }
   ]
 }
