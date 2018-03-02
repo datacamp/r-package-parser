@@ -12,7 +12,7 @@
       "containerCommand": [
         "bash",
         "-c",
-        "eval $(aws-env) && R -e RPackageParser::main()"
+        "eval $(aws-env) && R -e \"RPackageParser::main()\""
       ]
     }
   ]
