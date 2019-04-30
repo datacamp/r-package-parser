@@ -43,9 +43,9 @@ workflows:
                 - master
       - datacamp-ecr/pull_push_to_account:
           context: org-global
+          requires:
+            - build
           filters:
-            tags:
-              only: /^release-.*/
             branches:
               only:
                 - master
@@ -57,8 +57,6 @@ workflows:
           ecs-deploy-password: $PROD_ECS_DEPLOY_PASSWORD
           extra-env: "SERVICE=rdoc-r-worker"
           filters:
-            tags:
-              only: /^release-.*/
             branches:
               only:
                 - master
