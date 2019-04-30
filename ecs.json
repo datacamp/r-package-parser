@@ -1,7 +1,7 @@
 {
-  "cluster": "${CLUSTER}",
+  "cluster": "datacamp-services",
   "serviceProtocol": "none",
-  "desiredCount": ${DESIRED_COUNT},
+  "desiredCount": 1,
   "containers": [
     {
       "containerName": "${SERVICE}",
