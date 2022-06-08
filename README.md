@@ -1,6 +1,6 @@
 # RPackageParser
 
-R Package that builds on Hadley Wickham's `pkgdown` package, to parse R Documentation to be used on R Documentation. This package is being used in the pipeline of lambda workers.
+R Package that uses `pkgdown` package, to parse R package documentation and pass it on to the next Lambda worker to upload the documentation to the RDocumentation database.
 
 ## How it works
 
@@ -11,11 +11,20 @@ R Package that builds on Hadley Wickham's `pkgdown` package, to parse R Document
 
 ## Local development
 
-## Installing the package
+### Installing the package
 
-```R
-devtools::install_github("datacamp/r-package-parser")
-```
+- Ensure you have `devtools` installed to ease local development
+- Install the package's dependencies:
+  ```R
+  install.packages("pkgdown")
+  install.packages("aws.sqs", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))
+  ```
+- Open up `RPackageParser.RProj` in RStudio.
+- Select Build > Load All; this will make all exported and unexported functions of the package available.
+- To verify that it works, try to following command in your R console:
+  ```R
+  res <- process_package("https://cran.r-project.org/src/contrib/Archive/R6/R6_2.5.0.tar.gz", "R6", "cran")
+  ```
 
 ### Polling and posting to SQS queues
 
@@ -33,3 +42,8 @@ After that, you can run `main()`; this will poll the SQS queues and do all the p
 ```R
 RPackageParser::main()
 ```
+
+## Deployment
+
+TODO ADD INFO
+
