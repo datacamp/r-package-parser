@@ -57,13 +57,12 @@ parse_description <- function(pkg_folder, pkg_url, repo_type) {
 #' @export
 parse_topics <- function(pkg_folder) {
   message("Parsing topics ...")
-  file.rename(file.path(pkg_folder, "vignettes"), file.path(pkg_folder, "_vignettes"))
+  # file.rename(file.path(pkg_folder, "vignettes"), file.path(pkg_folder, "_vignettes"))
   pkg <- pkgdown:::as_pkgdown(pkg_folder)
-  pkg$topics %>%
-    transpose() %>%
-    map(pkgdown:::data_reference_topic, pkg, examples = FALSE) %>%
-    map(clean_up) %>%
-    map(add_pkg_info, pkg_folder)
+  x <- transpose(pkg$topics)
+  y <- map(x, pkgdown:::data_reference_topic, pkg)
+  z <- map(y, clean_up)
+  map(z, add_pkg_info, pkg_folder)
 }
 
 clean_up <- function(data) {
