@@ -1,6 +1,6 @@
 // name and version taken from the package <name>_<version>.tar.gz file
-// path is 'cran.r-project.org/pub/R/src/contrib/' + name
-export type InputRWorker = {
+// path is a url to download the package file
+export type RWorkerJobType = {
   name: string;
   version: string;
   path: string;

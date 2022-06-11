@@ -1,0 +1,29 @@
+{
+  "name": "validate",
+  "title": "Validate JSON",
+  "pagetitle": "Validate JSON — validate",
+  "source": "Source: <a href='https://github.com/jeroen/jsonlite/blob/HEAD/R/validate.R'><code>R/validate.R</code></a>",
+  "filename": "validate.Rd",
+  "author": [],
+  "aliases": "validate",
+  "keywords": [],
+  "description": "<p>Test if a string contains valid JSON. Characters vectors will be collapsed into a single string.</p>",
+  "opengraph": {
+    "description": "Test if a string contains valid JSON. Characters vectors will be collapsed into a single string."
+  },
+  "usage": {
+    "title": "Usage",
+    "contents": "<div class='sourceCode'><pre class='sourceCode r'><code><span class='fu'>validate</span><span class='op'>(</span><span class='va'>txt</span><span class='op'>)</span></code></pre></div>"
+  },
+  "examples": "<div class='sourceCode'><pre class='sourceCode r'><code><span class='r-in'><span class='co'>#Output from toJSON and serializeJSON should pass validation</span></span>n<span class='r-in'><span class='va'>myjson</span> <span class='op'>&lt;-</span> <span class='fu'>toJSON</span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>)</span></span>n<span class='r-in'><span class='fu'>validate</span><span class='op'>(</span><span class='va'>myjson</span><span class='op'>)</span> <span class='co'>#TRUE</span></span>n<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in validate(myjson):</span> could not find function \"validate\"</span>n<span class='r-in'></span>n<span class='r-in'><span class='co'>#Something bad happened</span></span>n<span class='r-in'><span class='va'>truncated</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/substr.html'>substring</a></span><span class='op'>(</span><span class='va'>myjson</span>, <span class='fl'>1</span>, <span class='fl'>100</span><span class='op'>)</span></span>n<span class='r-in'><span class='fu'>validate</span><span class='op'>(</span><span class='va'>truncated</span><span class='op'>)</span> <span class='co'>#FALSE</span></span>n<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in validate(truncated):</span> could not find function \"validate\"</span>n</code></pre></div>",
+  "sections": [
+    {
+      "title": "Arguments",
+      "contents": "<dl>n<dt>txt</dt>n<dd><p>JSON string</p></dd>n</dl>"
+    }
+  ],
+  "package": {
+    "package": "jsonlite",
+    "version": "1.8.0"
+  }
+}

@@ -1,4 +1,4 @@
-export type Description = {
+export type AppWorkerDescriptionJobType = {
    "Package": string;
    "Version": string;
    "Title":  string;

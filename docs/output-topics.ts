@@ -1,4 +1,4 @@
-export type Topics = {
+export type AppWorkerTopicsJobType = {
   "name": string;
   "title": string;
   "pagetitle": string;
