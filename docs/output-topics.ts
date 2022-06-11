@@ -4,7 +4,7 @@ export type AppWorkerTopicsJobType = {
   "pagetitle": string;
   "source": string;
   "filename": string;
-  "author": [],
+  "author": string | string[];
   "aliases": string | string[];
   "keywords": [],
   "description": string;
