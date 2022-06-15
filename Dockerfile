@@ -11,7 +11,7 @@ RUN curl -o /tmp/aws-env-linux-amd64 -L https://github.com/datacamp/aws-env/rele
   mv /tmp/aws-env-linux-amd64 /bin/aws-env
 
 RUN R -e 'install.packages("remotes")'
-RUN R -e 'remotes::install_version("pkgdown", "2.0.3")'
+RUN R -e 'remotes::install_github("datacamp/pkgdown", "fs/pkgdown-updates")'
 RUN R -e 'install.packages("aws.sqs", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))'
 
 COPY . r-package-parser

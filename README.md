@@ -16,7 +16,7 @@ R Package that uses `pkgdown` package, to parse R package documentation and pass
 - Ensure you have `devtools` installed to ease local development
 - Install the package's dependencies:
   ```R
-  remotes::install_version("pkgdown", "2.0.3")
+  remotes::install_github("datacamp/pkgdown", ref = "fs/pkgdown-updates")
   install.packages("aws.sqs", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))
   ```
 - Open up `RPackageParser.RProj` in RStudio.
