@@ -6,7 +6,7 @@ process_package <- function(pkg_url, pkg_name, repo_type) {
   rename_lowercase_rd_files(pkg_folder)
 
   description <- parse_description(pkg_folder, pkg_url, repo_type)
-  topics <- parse_topics(pkg_folder)
+  topics <- parse_topics(pkg_folder, description)
   return(list(description = description,
               topics = topics))
 }
@@ -55,17 +55,24 @@ parse_description <- function(pkg_folder, pkg_url, repo_type) {
 #' @importFrom jsonlite toJSON
 #' @importFrom purrr transpose map
 #' @export
-parse_topics <- function(pkg_folder) {
+parse_topics <- function(pkg_folder, description) {
   message("Parsing topics ...")
-  # file.rename(file.path(pkg_folder, "vignettes"), file.path(pkg_folder, "_vignettes"))
   withr::with_dir(pkg_folder, {
+
     pkg <- pkgdown:::as_pkgdown()
-    x <- transpose(pkg$topics)
-    y <- map(x, pkgdown:::data_reference_topic, pkg, examples_env = NULL)
-    z <- map(y, clean_up)
-    zz <- map(z, add_pkg_info, pkg_folder)
+    topics <- purrr::transpose(pkg$topics)
+
+    # TODO turn into sapply again after debugging is over
+    processed_topics <- list()
+    for(i in 1:length(topics)) {
+      message("Compiling topic ", i, "/", length(topics), " ...")
+      topic <- topics[[1]]
+      topic_data <- pkgdown:::data_reference_topic(topics[[i]], pkg, examples_env = NULL)
+      topic_data_clean <- clean_up(topic_data)
+      processed_topics[[i]] <- add_pkg_info(topic_data_clean, description)
+    }
   })
-  zz
+  processed_topics
 }
 
 clean_up <- function(data) {
@@ -93,8 +100,7 @@ clean_up <- function(data) {
   return(data)
 }
 
-add_pkg_info <- function(topic_data, pkg_folder) {
-  description <- get_description(pkg_folder)
+add_pkg_info <- function(topic_data, description) {
   topic_data$package <- list(package = description$Package, version = description$Version)
   return(topic_data)
 }
