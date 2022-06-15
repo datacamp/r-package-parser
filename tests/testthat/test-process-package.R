@@ -20,7 +20,7 @@ test_that("works for cran package", {
 test_that("works for bioconductor package", {
   res <-
     process_package(
-      "http://bioconductor.org/packages/release/bioc/src/contrib/destiny_2.0.3.tar.gz",
+      "https://bioconductor.org/packages/release/bioc/src/contrib/destiny_3.10.0.tar.gz",
       "destiny",
       "bioconductor"
     )
