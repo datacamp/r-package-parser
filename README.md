@@ -14,6 +14,7 @@ R Package that uses `pkgdown` package, to parse R package documentation and pass
 ### Installing the package
 
 - Ensure you have `devtools` installed to ease local development
+- Set an environment variable `GITHUB_PAT`
 - Install the package's dependencies:
   ```R
   remotes::install_github("datacamp/pkgdown", ref = "fs/pkgdown-updates")
