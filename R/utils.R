@@ -6,12 +6,11 @@ delete_files <- function() {
 download_and_unpack <- function(pkg_url, pkg_name) {
   message("Downloading and unpacking tarball ...")
 
-
   tmp_dir <- tempfile(pattern = "package_")
   dir.create(tmp_dir)
   tar_path <- file.path(tmp_dir, paste0(pkg_name, ".tar.gz"))
   options(timeout = 30)
-  tryCatch(download.file(pkg_url, tar_path),
+  tryCatch(download.file(pkg_url, tar_path, quiet = TRUE),
            error = function(e) simpleError('archive not found'))
 
   untar_dir <- file.path(tmp_dir, pkg_name)
