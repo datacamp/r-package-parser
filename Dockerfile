@@ -1,4 +1,4 @@
-FROM dockerhub.datacamp.com:443/r-base-prod:18
+FROM dockerhub.datacamp.com:443/r-base-prod:v2.0.1
 # r-base-prod already contains python and awscli
 
 # clean up credentials - install libxml2-dev and pandoc
@@ -9,6 +9,9 @@ RUN rm -rf /home/repl/.aws \
 RUN curl -o /tmp/aws-env-linux-amd64 -L https://github.com/datacamp/aws-env/releases/download/v0.1-session-fix/aws-env-linux-amd64 && \
   chmod +x /tmp/aws-env-linux-amd64 && \
   mv /tmp/aws-env-linux-amd64 /bin/aws-env
+
+# this is required because a dependency of pkgdown was failing if it's not there
+RUN apt-get install libharfbuzz-dev libfribidi-dev
 
 RUN R -e 'install.packages("remotes")'
 RUN R -e 'remotes::install_github("datacamp/pkgdown", "fs/pkgdown-updates")'
