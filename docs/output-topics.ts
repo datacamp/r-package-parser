@@ -6,8 +6,11 @@ export type AppWorkerTopicsJobType = {
   "filename": string;
   "author": string | string[];
   "aliases": string | string[];
-  "keywords": [],
-  "description": string;
+  "keywords": [];
+  "description": {
+    "title": string;
+    "contents": string;
+  };
   "opengraph": {
     "description": string;
   },
@@ -19,6 +22,7 @@ export type AppWorkerTopicsJobType = {
   "sections":{
     "title": string;
     "contents": string;
+    "slug": string;
   }[],
   "package": {
     "package": string;
