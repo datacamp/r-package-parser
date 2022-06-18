@@ -1,5 +1,7 @@
 # RPackageParser
 
+_Note:_ Please read this [confluence page](https://datacamp.atlassian.net/wiki/spaces/PRODENG/pages/2314469377/RDocumentation) which explains the complete architecture of how RDocumentation works.
+
 R Package that builds on Hadley Wickham's `pkgdown` package, to parse R Documentation to be used on R Documentation. This package is being used in the pipeline of lambda workers.
 
 We have forked our own version of `pkgdown` which we use here: https://github.com/datacamp/pkgdown
