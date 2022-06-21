@@ -2,19 +2,34 @@ version: 2.1
 orbs:
   datacamp-ecr: datacamp/ecr@1
   datacamp-deploy: datacamp/deploy@2
+jobs:
+  build:
+    environment:
+      SERVICE: rdoc-r-worker
+      ENVIRONMENT: staging
+    docker:
+      - image: ${STAGING_ECR_URL}/docker-deploy
+        aws_auth: &ecr_credentials
+          aws_access_key_id: $STAGING_AWS_ACCESS_KEY_ID
+          aws_secret_access_key: $STAGING_AWS_SECRET_ACCESS_KEY
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build application docker image
+          command: |
+            docker login -p ${DOCKERHUB_PASSWORD} -u ${DOCKERHUB_USER} dockerhub.datacamp.com:443
+            docker build -t ${STAGING_ECR_URL}/${SERVICE}:${CIRCLE_SHA1} .
+      - run:
+          name: Push image
+          command: |
+            DOCKER_IMAGE="${STAGING_ECR_URL}/${SERVICE}" TAG=${CIRCLE_SHA1} /docker-push.sh
 workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - datacamp-ecr/build_and_push_image_to_ecr:
-          name: build
+      - build:
           context: org-global
-          aws-access-key-id: $OPS_AWS_ACCESS_KEY_ID
-          aws-secret-access-key: $OPS_AWS_SECRET_ACCESS_KEY
-          account-url: $OPS_ECR_URL
-          extra-docker-args: "--build-arg NPM_TOKEN=${NPM_TOKEN}"
-          puller-account-ids: '["301258414863", "487088987264"]'
-          repo: rdoc-app
       - datacamp-deploy/deploy: # Staging
           context: org-global
           requires:
