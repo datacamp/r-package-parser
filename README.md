@@ -2,7 +2,7 @@
 
 _Note:_ Please read this [confluence page](https://datacamp.atlassian.net/wiki/spaces/PRODENG/pages/2314469377/RDocumentation) which explains the complete architecture of how RDocumentation works.
 
-R Package that builds on Hadley Wickham's `pkgdown` package, to parse R Documentation to be used on R Documentation. This package is being used in the pipeline of lambda workers.
+R Package that uses `pkgdown` package, to parse R package documentation and pass it on to the next Lambda worker to upload the documentation to the RDocumentation database.
 
 We have forked our own version of `pkgdown` which we use here: https://github.com/datacamp/pkgdown
 
@@ -15,11 +15,21 @@ We have forked our own version of `pkgdown` which we use here: https://github.co
 
 ## Local development
 
-## Installing the package
+### Installing the package
 
-```R
-devtools::install_github("datacamp/r-package-parser")
-```
+- Ensure you have `devtools` installed to ease local development
+- Set an environment variable `GITHUB_PAT`
+- Install the package's dependencies:
+  ```R
+  remotes::install_github("datacamp/pkgdown", ref = "fs/pkgdown-updates")
+  install.packages("aws.sqs", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))
+  ```
+- Open up `RPackageParser.RProj` in RStudio.
+- Select Build > Load All; this will make all exported and unexported functions of the package available.
+- To verify that it works, try to following command in your R console:
+  ```R
+  res <- process_package("https://cran.r-project.org/src/contrib/Archive/R6/R6_2.5.0.tar.gz", "R6", "cran")
+  ```
 
 ### Polling and posting to SQS queues
 
@@ -66,3 +76,8 @@ If you just want to test pulling a package and generating the output that will b
 2. `library("RPackageParser")`
 3. `res <- process_package("https://cran.r-project.org/src/contrib/REdaS_0.9.4.tar.gz", "REdaS", "cran")`: replace these arguments with the ones of the package you want to test.
 4. `write(jsonlite::toJSON(res$topics[[1]],auto_unbox = TRUE), file = 'topic.json')`: this will create a `topic.json` file in the root of the project that contains the JSON that will be added to the queue. This is what the API will process before adding the topic to the mysql database.
+
+
+## Deployment
+
+Merging to master should deploy this service to both staging and production.
