@@ -1,50 +1,26 @@
 version: 2.1
 orbs:
-  datacamp-ecr: datacamp/ecr@0.0.13
-  datacamp-deploy: datacamp/deploy@0.0.30
-jobs:
-  build:
-    environment:
-      SERVICE: rdoc-r-worker
-      ENVIRONMENT: staging
-    docker:
-      - image: ${STAGING_ECR_URL}/docker-deploy
-        aws_auth: &ecr_credentials
-          aws_access_key_id: $STAGING_AWS_ACCESS_KEY_ID
-          aws_secret_access_key: $STAGING_AWS_SECRET_ACCESS_KEY
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: Build application docker image
-          command: |
-            docker login -p ${DOCKERHUB_PASSWORD} -u ${DOCKERHUB_USER} dockerhub.datacamp.com:443
-            docker build -t ${STAGING_ECR_URL}/${SERVICE}:${CIRCLE_SHA1} .
-      - run:
-          name: Push image
-          command: |
-            DOCKER_IMAGE="${STAGING_ECR_URL}/${SERVICE}" TAG=${CIRCLE_SHA1} /docker-push.sh
+  datacamp-ecr: datacamp/ecr@1
+  datacamp-deploy: datacamp/deploy@2
 workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build:
+      - datacamp-ecr/build_and_push_image_to_ecr:
+          name: build
           context: org-global
+          aws-access-key-id: $OPS_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $OPS_AWS_SECRET_ACCESS_KEY
+          account-url: $OPS_ECR_URL
+          puller-account-ids: '["301258414863", "487088987264"]'
       - datacamp-deploy/deploy: # Staging
           context: org-global
           requires:
             - build
-          ecs-deploy-url: $STAGING_DEPLOY_URL
-          ecs-deploy-password: $STAGING_ECS_DEPLOY_PASSWORD
+          environment: staging
+          aws-access-key-id: $STAGING_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $STAGING_AWS_SECRET_ACCESS_KEY
           extra-env: "SERVICE=rdoc-r-worker"
-          filters:
-            branches:
-              only:
-                - master
-      - datacamp-ecr/pull_push_to_account:
-          context: org-global
-          requires:
-            - build
           filters:
             branches:
               only:
@@ -52,9 +28,10 @@ workflows:
       - datacamp-deploy/deploy: # Production
           context: org-global
           requires:
-            - datacamp-ecr/pull_push_to_account
-          ecs-deploy-url: $PROD_DEPLOY_URL
-          ecs-deploy-password: $PROD_ECS_DEPLOY_PASSWORD
+            - build
+          environment: prod
+          aws-access-key-id: $PROD_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $PROD_AWS_SECRET_ACCESS_KEY
           extra-env: "SERVICE=rdoc-r-worker"
           filters:
             branches:
