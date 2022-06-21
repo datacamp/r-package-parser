@@ -7,7 +7,10 @@
   "author": [],
   "aliases": "validate",
   "keywords": [],
-  "description": "<p>Test if a string contains valid JSON. Characters vectors will be collapsed into a single string.</p>",
+  "description": {
+    "title": "Description",
+    "contents": "<p>Test if a string contains valid JSON. Characters vectors will be collapsed into a single string.</p>"
+  },
   "opengraph": {
     "description": "Test if a string contains valid JSON. Characters vectors will be collapsed into a single string."
   },

@@ -1,4 +1,4 @@
-FROM dockerhub.datacamp.com:443/r-base-prod:18
+FROM dockerhub.datacamp.com:443/r-base-prod:v2.0.1
 # r-base-prod already contains python and awscli
 
 # clean up credentials - install libxml2-dev and pandoc
@@ -10,7 +10,11 @@ RUN curl -o /tmp/aws-env-linux-amd64 -L https://github.com/datacamp/aws-env/rele
   chmod +x /tmp/aws-env-linux-amd64 && \
   mv /tmp/aws-env-linux-amd64 /bin/aws-env
 
-RUN R -e 'devtools::install_github("datacamp/pkgdown", ref = "v0.0.3")' 
+# this is required because a dependency of pkgdown was failing if it's not there
+RUN apt-get install libharfbuzz-dev libfribidi-dev
+
+RUN R -e 'install.packages("remotes")'
+RUN R -e 'remotes::install_github("datacamp/pkgdown", "fs/pkgdown-updates")'
 RUN R -e 'install.packages("aws.sqs", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))'
 
 COPY . r-package-parser

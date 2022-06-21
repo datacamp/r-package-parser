@@ -6,7 +6,7 @@ process_package <- function(pkg_url, pkg_name, repo_type) {
   rename_lowercase_rd_files(pkg_folder)
 
   description <- parse_description(pkg_folder, pkg_url, repo_type)
-  topics <- parse_topics(pkg_folder)
+  topics <- parse_topics(pkg_folder, description)
   return(list(description = description,
               topics = topics))
 }
@@ -55,44 +55,26 @@ parse_description <- function(pkg_folder, pkg_url, repo_type) {
 #' @importFrom jsonlite toJSON
 #' @importFrom purrr transpose map
 #' @export
-parse_topics <- function(pkg_folder) {
+parse_topics <- function(pkg_folder, description) {
   message("Parsing topics ...")
-  file.rename(file.path(pkg_folder, "vignettes"), file.path(pkg_folder, "_vignettes"))
-  pkg <- pkgdown:::as_pkgdown(pkg_folder)
-  pkg$topics %>%
-    transpose() %>%
-    map(pkgdown:::data_reference_topic, pkg, examples = FALSE) %>%
-    map(clean_up) %>%
-    map(add_pkg_info, pkg_folder)
-}
+  withr::with_dir(pkg_folder, {
 
-clean_up <- function(data) {
-  # pkgdown puts things in sections that rdocs doesn't want in sections.
-  pull_out <- data.frame(pkgdown = c("Details", "References", "Source", "See also", "Value", "Note"),
-                         rdocs = c("details", "references", "source", "seealso", "value", "note"),
-                         stringsAsFactors = FALSE)
+    pkg <- pkgdown:::as_pkgdown()
+    topics <- purrr::transpose(pkg$topics)
 
-  cleaned_up_sections <- list()
-  for(section in data$sections) {
-    if(section$title %in% pull_out$pkgdown) {
-      # pull it out
-      keyname <- pull_out[section$title == pull_out$pkgdown, "rdocs"]
-      data[[keyname]] <- section$contents
-    } else {
-      cleaned_up_sections <- c(cleaned_up_sections,
-                               list(section[c('title', 'contents')]))
+    # TODO turn into sapply again after debugging is over
+    processed_topics <- list()
+    for(i in 1:length(topics)) {
+      message("Compiling topic ", i, "/", length(topics), " ...")
+      topic <- topics[[1]]
+      topic_data <- pkgdown:::data_reference_topic(topics[[i]], pkg, examples_env = NULL)
+      processed_topics[[i]] <- add_pkg_info(topic_data, description)
     }
-  }
-  data$sections <- cleaned_up_sections
-
-  # unpack description
-  data$description <- data$description$contents
-
-  return(data)
+  })
+  processed_topics
 }
 
-add_pkg_info <- function(topic_data, pkg_folder) {
-  description <- get_description(pkg_folder)
+add_pkg_info <- function(topic_data, description) {
   topic_data$package <- list(package = description$Package, version = description$Version)
   return(topic_data)
 }

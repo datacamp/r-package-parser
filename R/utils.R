@@ -6,17 +6,18 @@ delete_files <- function() {
 download_and_unpack <- function(pkg_url, pkg_name) {
   message("Downloading and unpacking tarball ...")
 
-  tar_path <- paste0(pkg_name, ".tar.gz")
+  tmp_dir <- tempfile(pattern = "package_")
+  dir.create(tmp_dir)
+  tar_path <- file.path(tmp_dir, paste0(pkg_name, ".tar.gz"))
   options(timeout = 30)
   tryCatch(download.file(pkg_url, tar_path, quiet = TRUE),
-           error = function(e) simpleError('not found'))
+           error = function(e) simpleError('archive not found'))
 
-  untar(tar_path, exdir = "packages/")
-  file.remove(tar_path)
+  untar_dir <- file.path(tmp_dir, pkg_name)
+  untar(tar_path, exdir = untar_dir)
+  # file.remove(tar_path)
 
-  # possible that tar was not unpacked with package name
-  pkg_folder <- file.path("packages", pkg_name)
-  file.rename(list.dirs("packages", recursive = FALSE), pkg_folder)
+  pkg_folder <- list.dirs(untar_dir, recursive = FALSE)
 
   return(pkg_folder)
 }
