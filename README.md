@@ -56,6 +56,8 @@ where you replace the body with the package that you want to test.
 
 Note that this is the production queue, which means that the queue will be processed both by your local parser and the production parser, and whoever pics the message first will be the one to process it. That's why you might need to send a few requests until your local parser can pick the message.
 
+After you added your message to the [rdoc-r-worker queue](https://us-east-1.console.aws.amazon.com/sqs/v2/home?region=us-east-1#/queues/https%3A%2F%2Fsqs.us-east-1.amazonaws.com%2F301258414863%2Frdoc-r-worker/send-receive), you should see it for a brief moment in AWS while its being processed. After the processing is done, you should be able to see new messages in [rdoc-app-worker queue](https://us-east-1.console.aws.amazon.com/sqs/v2/home?region=us-east-1#/queues/https%3A%2F%2Fsqs.us-east-1.amazonaws.com%2F301258414863%2Frdoc-app-worker/send-receive#/) (click on the "Poll for messages" button in the aws console).
+
 ### Testing locally without SQS queues
 
 If you just want to test pulling a package and generating the output that will be added to the destination queue, just open this project in RStudio and run these commands in the console:
