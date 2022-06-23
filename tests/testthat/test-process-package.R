@@ -45,17 +45,17 @@ test_that("works for github package", {
   expect_equal(length(res$topics), 36)
 })
 
-# test_that("works for baked-in R package", {
-#   res <-
-#     process_package(
-#       "https://s3.amazonaws.com/assets.rdocumentation.org/rpackages/archived/base/base_3.3.1.tar.gz",
-#       "base",
-#       "part_of_r"
-#     )
-#   desc <- res$description
-#   expect_equal(desc$Package, "base")
-#   expect_equal(desc$Version, "3.3.1")
-#   expect_equal(desc$readme, "")
-#   expect_equal(desc$repoType, "part_of_r")
-#   expect_equal(length(topics), 427 + 2 + 1)
-# })
+test_that("works for baked-in R package", {
+  res <-
+    process_package(
+      "https://s3.amazonaws.com/assets.rdocumentation.org/rpackages/archived/base/base_3.3.1.tar.gz",
+      "base",
+      "part_of_r"
+    )
+  desc <- res$description
+  expect_equal(desc$Package, "base")
+  expect_equal(desc$Version, "3.3.1")
+  expect_equal(desc$readme, "")
+  expect_equal(desc$repoType, "part_of_r")
+  expect_equal(length(res$topics), 427)
+})

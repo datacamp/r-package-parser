@@ -14,7 +14,7 @@ RUN curl -o /tmp/aws-env-linux-amd64 -L https://github.com/datacamp/aws-env/rele
 RUN apt-get install libharfbuzz-dev libfribidi-dev
 
 RUN R -e 'install.packages("remotes")'
-RUN R -e 'remotes::install_github("datacamp/pkgdown", "fs/pkgdown-updates")'
+RUN R -e 'remotes::install_github("datacamp/pkgdown", "fs/fix-part-of-r-parsing")'
 RUN R -e 'install.packages("aws.sqs", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))'
 
 COPY . r-package-parser

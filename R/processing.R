@@ -2,31 +2,25 @@
 #' @export
 process_package <- function(pkg_url, pkg_name, repo_type) {
   message(sprintf("Processing package at %s ...", pkg_url))
-  pkg_folder <- download_and_unpack(pkg_url, pkg_name)
-  rename_lowercase_rd_files(pkg_folder)
 
-  description <- parse_description(pkg_folder, pkg_url, repo_type)
-  topics <- parse_topics(pkg_folder, description)
+  withr::with_tempdir(
+    pattern = pkg_name,
+    {
+      pkg_folder <- unpack_pkg_tar(pkg_url)
+      description <- parse_description(pkg_folder, pkg_url, repo_type)
+      topics <- parse_topics(pkg_folder, description)
+    }
+  )
+
   return(list(description = description,
               topics = topics))
-}
-
-rename_lowercase_rd_files <- function(pkg_folder){
-  lowercase_files = dir(pkg_folder, pattern = "\\.rd$", full.names = TRUE, recursive = TRUE)
-  sapply(lowercase_files,FUN=function(path){
-      file.rename(from=path,to=sub(pattern=".rd",replacement=".Rd",path))
-  })
-}
-
-get_description <- function(pkg_folder) {
-  desc_path <- file.path(pkg_folder, "DESCRIPTION")
-  as.list(read.dcf(desc_path)[1, ])
 }
 
 #' @importFrom jsonlite toJSON
 #' @importFrom purrr map
 #' @export
-parse_description <- function(pkg_folder, pkg_url, repo_type) {
+parse_description <- function(pkg_folder = ".", pkg_url, repo_type) {
+  rename_lowercase_rd_files(pkg_folder)
   message("Parsing DESCRIPTION file ...")
   description <- get_description(pkg_folder)
   description$repoType <- repo_type
@@ -72,6 +66,18 @@ parse_topics <- function(pkg_folder, description) {
     }
   })
   processed_topics
+}
+
+get_description <- function(pkg_folder) {
+  desc_path <- file.path(pkg_folder, "DESCRIPTION")
+  as.list(read.dcf(desc_path)[1, ])
+}
+
+rename_lowercase_rd_files <- function(pkg_folder){
+  lowercase_files = dir(pkg_folder, pattern = "\\.rd$", full.names = TRUE, recursive = TRUE)
+  sapply(lowercase_files,FUN=function(path){
+    file.rename(from=path,to=sub(pattern=".rd",replacement=".Rd",path))
+  })
 }
 
 add_pkg_info <- function(topic_data, description) {
