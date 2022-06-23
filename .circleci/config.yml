@@ -30,6 +30,7 @@ workflows:
     jobs:
       - build:
           context: org-global
+          repo: rdoc-r-worker
       - datacamp-deploy/deploy: # Staging
           context: org-global
           requires:
@@ -42,10 +43,18 @@ workflows:
             branches:
               only:
                 - master
-      - datacamp-deploy/deploy: # Production
+      - datacamp-ecr/pull_push_to_account:
           context: org-global
           requires:
             - build
+          filters:
+            branches:
+              only:
+                - master
+      - datacamp-deploy/deploy: # Production
+          context: org-global
+          requires:
+            - datacamp-ecr/pull_push_to_account
           environment: prod
           aws-access-key-id: $PROD_AWS_ACCESS_KEY_ID
           aws-secret-access-key: $PROD_AWS_SECRET_ACCESS_KEY
