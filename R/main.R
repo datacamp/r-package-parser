@@ -4,7 +4,7 @@
 #' @importFrom aws.sqs create_queue receive_msg delete_msg
 #' @importFrom jsonlite fromJSON toJSON prettify
 main <- function() {
-  parser_version <- 1
+  parser_version <- 2
 
   if(file.exists(".env.R")) {
     source(".env.R")
