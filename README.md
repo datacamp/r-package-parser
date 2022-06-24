@@ -21,7 +21,7 @@ We have forked our own version of `pkgdown` which we use here: https://github.co
 - Set an environment variable `GITHUB_PAT`
 - Install the package's dependencies:
   ```R
-  remotes::install_github("datacamp/pkgdown", ref = "fs/fix-part-of-r-parsing")
+  remotes::install_github("datacamp/pkgdown", ref = "master")
   install.packages("aws.sqs", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))
   ```
 - Open up `RPackageParser.RProj` in RStudio.
