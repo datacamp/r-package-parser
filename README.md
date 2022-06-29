@@ -59,7 +59,7 @@ RPackageParser::main()
 If you want to add messages to the queue for local testing, setup the aws cli and then run:
 
 ```
-aws sqs send-message --queue-url https://queue.amazonaws.com/301258414863/rdoc-r-worker --message-body '{"name":"ReorderCluster","version":"1.0","path":"ftp://cran.r-project.org/pub/R/src/contrib/ReorderCluster_1.0.tar.gz"}'
+aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/487088987264/rdoc-r-worker --message-body '{"name":"ReorderCluster","version":"1.0","path":"ftp://cran.r-project.org/pub/R/src/contrib/ReorderCluster_1.0.tar.gz"}'
 ```
 
 where you replace the body with the package that you want to test.
