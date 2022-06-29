@@ -12,8 +12,8 @@ main <- function() {
 
   # names for the queues
   from_queue <- Sys.getenv("SOURCE_QUEUE")
-  to_queue <- Sys.getenv("DEST_QUEUE")
-  error_queue <- Sys.getenv("DEADLETTER_QUEUE")
+  to_queue <- Sys.getenv("DEST_QUEUE") # rdoc-app-worker
+  error_queue <- Sys.getenv("DEADLETTER_QUEUE") # rdoc-r-worker-deadletter
 
   # initialize the queues
   create_queue(from_queue)
@@ -21,13 +21,14 @@ main <- function() {
   create_queue(error_queue)
 
   while(1) {
-    message("Polling for messages...")
+    info("Polling for messages...")
     messages <- receive_msg(from_queue, wait = 20)
     if(nrow(messages) > 0) {
 
       for (i in 1:nrow(messages)) {
         delete_files()
         message <- as.list(messages[i, ])
+        info(paste("Received message:", prettify(message$Body), sep="\n"))
         body <- fromJSON(message$Body)
         repo_type <- body$repoType
         if (is.null(repo_type)) {
@@ -43,28 +44,28 @@ main <- function() {
                                           parsingStatus = "success",
                                           parserVersion = parser_version,
                                           parsedAt = datetime)
+          info("Putting description and topics on S3 ...")
           dump_jsons_on_s3(res$description, res$topics)
           post_job(to_queue, toJSON(res$description, auto_unbox = TRUE), "version")
           post_job(to_queue, sapply(res$topics, toJSON, auto_unbox = TRUE), "topic")
         },
         error = function(e) {
           errorObject <- character(0)
-          errorObject$jobInfo <-  list(error = e$message,
-                                        package = body$name,
-                                        version = body$version,
-                                        parsingStatus = "failed",
-                                        parserVersion = parser_version,
-                                        parsedAt = datetime)
+          errorObject$jobInfo <-  list(message_body = body,
+                                       error = e$message,
+                                       parsingStatus = "failed",
+                                       parserVersion = parser_version,
+                                       parsedAt = datetime)
 
           error_json <- toJSON(errorObject, auto_unbox = TRUE)
-          cat(prettify(error_json))
+          message(prettify(error_json))
+          info("Putting job in deadletter queue ...")
           post_job(error_queue, error_json, "error")
-          post_job(to_queue, error_json, 'version')
         }, finally = {
           delete_files()
-          message("Deleting job from SQS ...")
+          info("Deleting job from SQS ...")
           delete_msg(from_queue, message$ReceiptHandle)
-          message("Garbage collection ...")
+          info("Garbage collection ...")
           gc()
         })
       }

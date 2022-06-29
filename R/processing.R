@@ -1,7 +1,7 @@
 #' Process a package:
 #' @export
 process_package <- function(pkg_url, pkg_name, repo_type) {
-  message(sprintf("Processing package at %s ...", pkg_url))
+  info(sprintf("Processing package at %s ...", pkg_url))
 
   withr::with_tempdir(
     pattern = pkg_name,
@@ -21,7 +21,7 @@ process_package <- function(pkg_url, pkg_name, repo_type) {
 #' @export
 parse_description <- function(pkg_folder = ".", pkg_url, repo_type) {
   rename_lowercase_rd_files(pkg_folder)
-  message("Parsing DESCRIPTION file ...")
+  info("Parsing DESCRIPTION file ...")
   description <- get_description(pkg_folder)
   description$repoType <- repo_type
   description$tarballUrl <- pkg_url
@@ -50,7 +50,7 @@ parse_description <- function(pkg_folder = ".", pkg_url, repo_type) {
 #' @importFrom purrr transpose map
 #' @export
 parse_topics <- function(pkg_folder, description) {
-  message("Parsing topics ...")
+  info("Parsing topics ...")
   withr::with_dir(pkg_folder, {
 
     pkg <- pkgdown:::as_pkgdown()
@@ -59,7 +59,7 @@ parse_topics <- function(pkg_folder, description) {
     # TODO turn into sapply again after debugging is over
     processed_topics <- list()
     for(i in 1:length(topics)) {
-      message("Compiling topic ", i, "/", length(topics), " ...")
+      info("Compiling topic", i, "/", length(topics), "...")
       topic <- topics[[1]]
       topic_data <- pkgdown:::data_reference_topic(topics[[i]], pkg, examples_env = NULL)
       processed_topics[[i]] <- add_pkg_info(topic_data, description)

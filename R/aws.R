@@ -80,7 +80,7 @@ send_msg <- function(queue, msg, query = list(), attributes = NULL, delay = NULL
 }
 
 post_job <- function(queue, json, value) {
-  message(sprintf("Posting %s job...", value))
+  info(sprintf("Posting %s job...", value))
   send_msg(queue,
            msg = json,
            query = list(MessageAttribute.1.Name = "type",
