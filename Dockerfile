@@ -1,5 +1,4 @@
 FROM dockerhub.datacamp.com:443/r-base-prod:v2.0.1
-# r-base-prod already contains python and awscli
 
 # clean up credentials - install libxml2-dev and pandoc
 RUN rm -rf /home/repl/.aws \
@@ -21,5 +20,14 @@ COPY . r-package-parser
 
 RUN R CMD build r-package-parser
 RUN R CMD INSTALL r-package-parser
+
+# Install the aws CLI
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+  unzip awscliv2.zip && \
+  ./aws/install && \
+  rm -rf aws awscliv2.zip
+
+# Uncomment this line if you want to run the docker container locally without having to specify a bunch of env variables
+# RUN cp r-package-parser/.env.R /home/repl/.env.R
 
 CMD ["R", "-e", "RPackageParser::main()"]
