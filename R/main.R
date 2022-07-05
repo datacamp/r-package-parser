@@ -1,7 +1,6 @@
 #' Main entry point of the package
 #'
 #' @export
-#' @importFrom aws.sqs create_queue receive_msg delete_msg
 #' @importFrom jsonlite fromJSON toJSON prettify
 main <- function() {
   parser_version <- 2
@@ -15,14 +14,15 @@ main <- function() {
   to_queue <- Sys.getenv("DEST_QUEUE") # rdoc-app-worker
   error_queue <- Sys.getenv("DEADLETTER_QUEUE") # rdoc-r-worker-deadletter
 
-  # initialize the queues
-  create_queue(from_queue)
-  create_queue(to_queue)
-  create_queue(error_queue)
+  # # initialize the queues
+  # create_queue(from_queue)
+  # create_queue(to_queue)
+  # create_queue(error_queue)
 
   while(1) {
-    info("Polling for messages...")
+    info("Polling for messages on", from_queue, "...")
     messages <- receive_msg(from_queue, wait = 20)
+    print(messages)
     if(nrow(messages) > 0) {
 
       for (i in 1:nrow(messages)) {
