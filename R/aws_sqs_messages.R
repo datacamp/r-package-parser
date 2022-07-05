@@ -64,17 +64,23 @@ receive_msg <- function(queue, attributes = NULL, n = 1, timeout = NULL, wait = 
     return(out)
   }
   out2 <- out$ReceiveMessageResponse$ReceiveMessageResult
-  if (!length(out2)) {
-    out2 <- data.frame(Attributes = character(0),
-                       Body = character(0),
-                       MD5OfBody = character(0),
-                       MD5OfMessageAttributes = character(0),
-                       MessageAttributes = character(0),
-                       MessageId = character(0),
-                       ReceiptHandle = character(0),
-                       stringsAsFactors = FALSE)
+  if (is.null(out2$messages) && !is.null(out2$Message)) {
+    messages <- list()
+    for (i in 1:length(out2$Message$MessageId)) {
+      messages[[i]] <- list(
+        MessageId = out2$Message$MessageId[[i]],
+        ReceiptHandle = out2$Message$ReceiptHandle[[i]],
+        MD5OfBody = out2$Message$MD5OfBody[[i]],
+        Body = out2$Message$Body[[i]]
+      )
+    }
+  } else {
+    messages <- out2$messages
   }
-  structure(out2,
+  if (!length(out2)) {
+    messages <- list()
+  }
+  structure(messages,
             RequestId = out$ReceiveMessageResponse$ResponseMetadata$RequestId)
 }
 

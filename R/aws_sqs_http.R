@@ -88,7 +88,7 @@ sqsHTTP <-
       attr(out, "request_string_to_sign") <- Sig$StringToSign
       attr(out, "request_signature") <- Sig$SignatureHeader
     } else {
-      out <- try(jsonlite::fromJSON(cont), silent = TRUE)
+      out <- try(jsonlite::fromJSON(cont, simplifyVector = FALSE), silent = TRUE)
       if (inherits(out, "try-error")) {
         out2 <- try(xml2::as_list(xml2::read_xml(cont)), silent = TRUE)
         if (inherits(out2, "try-error")) {
@@ -96,7 +96,6 @@ sqsHTTP <-
         } else {
           out <- out2
         }
-
       }
     }
     return(out)

@@ -37,12 +37,13 @@ copy_local <- function(local, path, dirname){
   }
 }
 
+send_msg_wrap <- function(queue, msg, type) {
+  info(paste(sprintf("Sending %s message to %s", type, queue), prettify(msg), sep="\n"))
 
-post_job <- function(queue, json, value) {
-  info(sprintf("Posting %s job...", value))
-  send_msg(queue,
-           msg = json,
+  send_msg(queue = queue,
+           msg = msg,
            query = list(MessageAttribute.1.Name = "type",
                         MessageAttribute.1.Value.DataType ="String",
-                        MessageAttribute.1.Value.StringValue = value))
+                        MessageAttribute.1.Value.StringValue = type))
 }
+
