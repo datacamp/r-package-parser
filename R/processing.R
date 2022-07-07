@@ -103,6 +103,11 @@ clean_up <- function(data) {
   # unpack description
   data$description <- data$description$contents
 
+  # unpack usage
+  if (!is.null(data$usage) && !is.null(data$usage$contents)) {
+    data$usage <- data$usage$contents
+  }
+
   return(data)
 }
 
