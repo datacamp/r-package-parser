@@ -16,6 +16,9 @@ RUN R -e 'install.packages("remotes")'
 RUN R -e 'remotes::install_github("datacamp/pkgdown", ref = "master")'
 RUN R -e 'install.packages("aws.sqs", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))'
 
+ARG VERSION
+ENV VERSION=${VERSION}
+
 COPY . r-package-parser
 
 RUN R CMD build r-package-parser
