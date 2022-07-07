@@ -62,7 +62,8 @@ parse_topics <- function(pkg_folder, description) {
       info("Compiling topic", i, "/", length(topics), "...")
       topic <- topics[[1]]
       topic_data <- pkgdown:::data_reference_topic(topics[[i]], pkg, examples_env = NULL)
-      processed_topics[[i]] <- add_pkg_info(topic_data, description)
+      topic_data_clean <- clean_up(topic_data)
+      processed_topics[[i]] <- add_pkg_info(topic_data_clean, description)
     }
   })
   processed_topics
@@ -78,6 +79,31 @@ rename_lowercase_rd_files <- function(pkg_folder){
   sapply(lowercase_files,FUN=function(path){
     file.rename(from=path,to=sub(pattern=".rd",replacement=".Rd",path))
   })
+}
+
+clean_up <- function(data) {
+  # pkgdown puts things in sections that rdocs doesn't want in sections.
+  pull_out <- data.frame(pkgdown = c("Details", "References", "Source", "See also", "Value", "Note"),
+                         rdocs = c("details", "references", "source", "seealso", "value", "note"),
+                         stringsAsFactors = FALSE)
+
+  cleaned_up_sections <- list()
+  for(section in data$sections) {
+    if(section$title %in% pull_out$pkgdown) {
+      # pull it out
+      keyname <- pull_out[section$title == pull_out$pkgdown, "rdocs"]
+      data[[keyname]] <- section$contents
+    } else {
+      cleaned_up_sections <- c(cleaned_up_sections,
+                               list(section[c('title', 'contents')]))
+    }
+  }
+  data$sections <- cleaned_up_sections
+
+  # unpack description
+  data$description <- data$description$contents
+
+  return(data)
 }
 
 add_pkg_info <- function(topic_data, description) {
