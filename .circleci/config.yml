@@ -14,14 +14,13 @@ workflows:
           account-url: $OPS_ECR_URL
           puller-account-ids: '["301258414863", "487088987264"]'
           extra-docker-args: "--build-arg VERSION=$(git describe --tags)"
+          pre-build-steps:
+            - run:
+                name: Build application docker image
+                command: |
+                  docker login -p ${DOCKERHUB_PASSWORD} -u ${DOCKERHUB_USER} dockerhub.datacamp.com:443
           repo: rdoc-r-worker
           executor: datacamp-ecr/buildkit
-          filters:
-            branches:
-              only:
-                - master
-            tags:
-              only: /^v\d+\.\d+\.\d+$/
       - datacamp-deploy/deploy: # Staging
           name: deploy-staging
           context: org-global
