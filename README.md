@@ -80,4 +80,5 @@ If you just want to test pulling a package and generating the output that will b
 
 ## Deployment
 
-Merging to master should deploy this service to both staging and production.
+- Commits to master are deployed to staging
+- Tags that use `vx.y.z` are deployed to production
