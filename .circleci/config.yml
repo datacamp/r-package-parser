@@ -29,6 +29,11 @@ workflows:
           repo: rdoc-r-worker
           executor: datacamp-artifactory/buildkit
           git_tag_filter: '--match "[0-9]*.[0-9]*.[0-9]*"'
+          pre-build-steps:
+            - run:
+                name: Build application docker image
+                command: |
+                  docker login -p ${DOCKERHUB_PASSWORD} -u ${DOCKERHUB_USER} dockerhub.datacamp.com:443
           requires:
            - queue
 
@@ -53,6 +58,11 @@ workflows:
           extra-docker-args: "--build-arg VERSION=$(git describe --tags)"
           repo: rdoc-r-worker
           executor: datacamp-artifactory/buildkit
+          pre-build-steps:
+            - run:
+                name: Build application docker image
+                command: |
+                  docker login -p ${DOCKERHUB_PASSWORD} -u ${DOCKERHUB_USER} dockerhub.datacamp.com:443
           filters:
             branches:
               only:
