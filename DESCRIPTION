@@ -11,13 +11,16 @@ License: MIT + file LICENSE
 LazyData: TRUE
 Depends: 
   R (>= 3.0.0),
-  pkgdown,
-  aws.sqs
+  pkgdown
 Imports:
-  jsonlite
+  jsonlite,
+  aws.signature,
+  jsonlite,
+  purrr,
+  xml2
 Remotes:
   datacamp/pkgdown
 Suggests:
   testthat
-RoxygenNote: 6.0.1
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
